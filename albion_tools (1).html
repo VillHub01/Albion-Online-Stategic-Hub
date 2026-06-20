@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Albion Online Tools</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom scrollbar to match dark theme */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans min-h-screen">
+
+    <!-- HEADER -->
+    <header class="bg-gray-800 border-b border-gray-700 shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-shield-halved text-2xl text-amber-500"></i>
+                <h1 class="text-xl font-bold tracking-wider text-amber-500 hidden sm:block">ALBION TOOLS</h1>
+            </div>
+            
+            <nav class="flex space-x-2 overflow-x-auto hide-scrollbar">
+                <button onclick="switchTab('kalkulator')" id="tab-kalkulator" class="tab-btn px-4 py-2 text-sm font-medium rounded-md transition-colors bg-amber-600 text-white">Kalkulator</button>
+                <button onclick="switchTab('build')" id="tab-build" class="tab-btn px-4 py-2 text-sm font-medium rounded-md transition-colors text-gray-300 hover:bg-gray-700">Build</button>
+                <button onclick="switchTab('panduan')" id="tab-panduan" class="tab-btn px-4 py-2 text-sm font-medium rounded-md transition-colors text-gray-300 hover:bg-gray-700">Panduan</button>
+                <button onclick="switchTab('log')" id="tab-log" class="tab-btn px-4 py-2 text-sm font-medium rounded-md transition-colors text-gray-300 hover:bg-gray-700">Log</button>
+            </nav>
+            
+            <!-- ADMIN LOGO 'A' -->
+            <button onclick="switchTab('admin')" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600 border border-gray-600 transition-colors group" title="Admin Login">
+                <span class="text-xl font-bold font-serif text-gray-300 group-hover:text-amber-500">A</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- META UPDATE BOX -->
+    <div id="meta-banner" class="bg-amber-900/40 border-l-4 border-amber-500 text-amber-200 p-3 shadow-inner text-sm text-center block">
+        <span class="font-bold mr-2"><i class="fa-solid fa-bullhorn"></i> META UPDATE TERBARU:</span> 
+        <span id="meta-text-display">Patch 22.1: Bloodletter kena nerf pada cooldown, gunakan dengan lebih hati-hati!</span>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="container mx-auto px-4 py-8 max-w-5xl">
+
+        <!-- 1. KALKULATOR VIEW -->
+        <section id="view-kalkulator" class="fade-in block">
+            <div class="flex gap-4 border-b border-gray-700 pb-2 mb-6">
+                <button onclick="switchCalcType('refining')" id="btn-calc-refining" class="flex items-center gap-2 px-4 py-2 rounded-t-lg transition-colors bg-gray-800 text-amber-500 border-b-2 border-amber-500">
+                    <i class="fa-solid fa-hammer"></i> Refining / Crafting
+                </button>
+                <button onclick="switchCalcType('gathering')" id="btn-calc-gathering" class="flex items-center gap-2 px-4 py-2 rounded-t-lg transition-colors text-gray-400 hover:text-gray-200">
+                    <i class="fa-solid fa-map"></i> Gathering
+                </button>
+            </div>
+
+            <!-- Kalkulator Refining -->
+            <div id="calc-refining-box" class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 block">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Form Input -->
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-bold text-gray-200 border-b border-gray-700 pb-2">Input Data Refining</h3>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">Nama Item Siap Jual</label>
+                            <input type="text" id="calc-item" class="w-full bg-gray-900 border border-gray-600 rounded p-2 text-white outline-none focus:border-amber-500" placeholder="Cth: T5 Leather" value="T5 Leather">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Total Beli Bahan</label>
+                                <input type="number" id="calc-bahan" class="w-full bg-gray-900 border border-gray-600 rounded p-2 text-white outline-none focus:border-amber-500" value="100000">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Jumlah Craft / Qty</label>
+                                <input type="number" id="calc-qty" class="w-full bg-gray-900 border border-gray-600 rounded p-2 text-white outline-none focus:border-amber-500" value="100">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">UCV per unit</label>
+                                <input type="number" id="calc-ucv" class="w-full bg-gray-900 border border-gray-600 rounded p-2 text-white outline-none focus:border-amber-500" value="50">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Harga Jual / unit</label>
+                                <input type="number" id="calc-jual" class="w-full bg-gray-900 border border-gray-600 rounded p-2 text-white outline-none focus:border-amber-500" value="1500">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Pajak Pasar (%)</label>
+                                <input type="number" id="calc-pajak" class="w-full bg-gray-900 border border-gray-600 rounded p-2 text-white outline-none focus:border-amber-500" value="6.5" step="0.1">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Return Rate (%)</label>
+                                <input type="number" id="calc-return" class="w-full bg-gray-900 border border-gray-600 rounded p-2 text-white outline-none focus:border-amber-500" value="15.2" step="0.1">
+                            </div>
+                        </div>
+                        <button onclick="calculateRefining()" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 rounded mt-4 transition-colors">Hitung Analisa</button>
+                    </div>
+
+                    <!-- Hasil Analisa -->
+                    <div class="bg-gray-900 p-6 rounded-lg border border-gray-700 relative">
+                        <h3 class="text-xl font-bold text-gray-200 border-b border-gray-700 pb-2 mb-4">Hasil Analisa</h3>
+                        
+                        <div id="calc-result-empty" class="h-full flex items-center justify-center text-gray-500 flex-col gap-2 opacity-50 pb-10 block">
+                            <i class="fa-solid fa-calculator text-4xl mb-2"></i>
+                            <p>Klik tombol Hitung untuk melihat hasil</p>
+                        </div>
+
+                        <div id="calc-result-data" class="space-y-4 hidden">
+                            <div class="flex justify-between p-3 bg-gray-800 rounded">
+                                <span class="text-gray-400">Total HPP</span> 
+                                <span id="res-hpp" class="font-bold text-red-400">0 🪙</span>
+                            </div>
+                            <div class="flex justify-between p-3 bg-gray-800 rounded">
+                                <span class="text-gray-400">Total Jual (Kotor)</span> 
+                                <span id="res-kotor" class="font-bold text-blue-400">0 🪙</span>
+                            </div>
+                            <div class="flex justify-between p-3 bg-gray-800 rounded border border-gray-700">
+                                <span class="text-gray-400">Pajak Pasar</span> 
+                                <span id="res-pajak" class="font-bold text-gray-500">-0 🪙</span>
+                            </div>
+                            <div id="res-box-untung" class="flex justify-between p-4 rounded-lg border bg-gray-800">
+                                <span class="font-bold text-lg">Keuntungan Bersih</span> 
+                                <span id="res-bersih" class="font-bold text-xl">0 🪙</span>
+                            </div>
+                            <div class="flex justify-between p-3 bg-gray-800 rounded">
+                                <span class="text-gray-400">Efisiensi (ROI)</span> 
+                                <span id="res-roi" class="font-bold text-amber-500">0%</span>
+                            </div>
+                            
+                            <div class="flex gap-2 pt-4">
+                                <button onclick="shareWA()" class="flex-1 flex justify-center items-center gap-2 bg-green-600 hover:bg-green-500 py-2 rounded font-bold transition-colors">
+                                    <i class="fa-brands fa-whatsapp"></i> Share WA
+                                </button>
+                                <button onclick="downloadCSV()" class="flex-1 flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-500 py-2 rounded font-bold transition-colors">
+                                    <i class="fa-solid fa-download"></i> Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kalkulator Gathering -->
+            <div id="calc-gathering-box" class="bg-gray-800 p-10 rounded-xl shadow-lg border border-gray-700 text-center hidden">
+                <i class="fa-solid fa-pickaxe text-6xl text-gray-600 mb-4"></i>
+                <h3 class="text-2xl font-bold text-gray-300">Kalkulator Gathering</h3>
+                <p class="text-gray-500 mt-2 max-w-md mx-auto">Logika Gathering memiliki HPP dasar 0 (kecuali konsumsi alat/makanan). Anda dapat menggunakan menu Kalkulator Refining untuk mengolah & menghitung hasil gathering secara mendetail ke depannya.</p>
+            </div>
+        </section>
+
+        <!-- 2. BUILD VIEW -->
+        <section id="view-build" class="fade-in hidden">
+            <div class="flex flex-wrap gap-2 mb-6" id="build-categories">
+                <!-- Categories injected by JS -->
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Gear List -->
+                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+                    <h3 class="text-xl font-bold text-amber-500 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-shield"></i> Perlengkapan (<span id="active-cat-name">PVP</span>)
+                    </h3>
+                    <div class="space-y-3" id="gear-slots-container">
+                        <!-- Gear slots injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Reason Box -->
+                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 relative flex flex-col min-h-[400px]">
+                    <h3 class="text-xl font-bold text-blue-400 mb-4 flex items-center gap-2 border-b border-gray-700 pb-2">
+                        <i class="fa-solid fa-circle-info"></i> Alasan Pemilihan
+                    </h3>
+                    
+                    <div id="reason-empty" class="m-auto text-center text-gray-500 block">
+                        <i class="fa-solid fa-hand-pointer text-4xl mb-3 opacity-50"></i>
+                        <p>Klik salah satu perlengkapan di sebelah kiri<br/>untuk melihat alasan detailnya.</p>
+                    </div>
+
+                    <div id="reason-content" class="fade-in hidden">
+                        <h4 id="reason-item-name" class="text-2xl font-black text-white mb-2">Nama Item</h4>
+                        <span id="reason-item-slot" class="inline-block px-2 py-1 bg-gray-700 text-xs rounded text-gray-300 mb-4 uppercase">SLOT - KATEGORI</span>
+                        
+                        <!-- SARAN SKILL BOX -->
+                        <div class="mb-4 bg-amber-900/30 border border-amber-600/50 p-4 rounded-lg shadow-inner">
+                            <h5 class="text-amber-400 font-bold text-sm mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Saran Skill:
+                            </h5>
+                            <p id="reason-item-skill" class="text-amber-100 font-mono text-sm font-semibold tracking-wide">
+                                Q: Skill 1 | W: Skill 2 | Pasif: Skill 3
+                            </p>
+                        </div>
+
+                        <p id="reason-item-desc" class="text-gray-300 text-lg leading-relaxed bg-gray-900 p-4 rounded-lg border-l-4 border-blue-500">
+                            Alasan...
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. PANDUAN VIEW -->
+        <section id="view-panduan" class="fade-in hidden">
+            <div class="grid md:grid-cols-2 gap-6" id="guides-container">
+                <!-- Guides injected by JS -->
+            </div>
+        </section>
+
+        <!-- 4. LOG VIEW (Pencatatan Pendapatan) -->
+        <section id="view-log" class="fade-in hidden">
+            <div class="grid md:grid-cols-3 gap-8">
+                
+                <!-- Kolom Kiri: Form Input -->
+                <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 h-fit">
+                    <h3 class="text-xl font-bold text-amber-500 border-b border-gray-700 pb-2 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-book-journal-whills"></i> Catat Pendapatan
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">Jenis Aktivitas</label>
+                            <select id="log-activity" class="w-full bg-gray-900 border border-gray-600 rounded p-3 text-white outline-none focus:border-amber-500">
+                                <option value="Gathering">Gathering (Kumpul Bahan)</option>
+                                <option value="Faction">Faction Warfare</option>
+                                <option value="Market">Market (Trading/Refining)</option>
+                                <option value="Dungeon">Dungeon / PvE</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">Jumlah Silver</label>
+                            <input type="number" id="log-silver" class="w-full bg-gray-900 border border-gray-600 rounded p-3 text-white outline-none focus:border-amber-500" placeholder="Cth: 1500000">
+                            <span id="log-error-msg" class="text-red-400 text-xs mt-1 font-semibold hidden"><i class="fa-solid fa-circle-exclamation"></i> Masukkan jumlah silver yang valid (lebih dari 0).</span>
+                        </div>
+                        <button onclick="addLog()" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 rounded transition-colors mt-2">
+                            Simpan Log Harian
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Kolom Kanan: Tabel Riwayat -->
+                <div class="md:col-span-2 bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-700 pb-3 mb-4 gap-4">
+                        <h3 class="text-xl font-bold text-blue-400 flex items-center gap-2">
+                            <i class="fa-solid fa-list-check"></i> Riwayat Pencatatan
+                        </h3>
+                        <div class="bg-gray-900 px-4 py-2 rounded-lg border border-gray-600 flex items-center gap-2">
+                            <span class="text-sm text-gray-400 uppercase tracking-wider font-bold">Total Akumulasi:</span>
+                            <span id="log-total-silver" class="font-bold text-xl text-amber-400">0 🪙</span>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto rounded-lg border border-gray-700">
+                        <table class="w-full text-left border-collapse whitespace-nowrap">
+                            <thead>
+                                <tr class="bg-gray-900 text-gray-400 text-sm border-b border-gray-700">
+                                    <th class="p-4 font-semibold">Tanggal</th>
+                                    <th class="p-4 font-semibold">Aktivitas</th>
+                                    <th class="p-4 font-semibold text-right">Jumlah (Silver)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="log-table-body" class="bg-gray-800">
+                                <!-- Data logs injected via JS -->
+                                <tr>
+                                    <td colspan="3" class="p-8 text-center text-gray-500">
+                                        <i class="fa-solid fa-box-open text-3xl mb-2"></i><br>
+                                        Belum ada data pendapatan yang dicatat.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 5. ADMIN DASHBOARD -->
+        <section id="view-admin" class="fade-in hidden">
+            
+            <!-- Login Form -->
+            <div id="admin-login" class="max-w-md mx-auto mt-10 bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700 block">
+                <div class="flex justify-center mb-6">
+                    <div class="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center border-2 border-amber-500">
+                        <span class="text-3xl font-bold font-serif text-amber-500">A</span>
+                    </div>
+                </div>
+                <h2 class="text-2xl font-bold text-center text-white mb-6">Portal Admin Rahasia</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-gray-400 mb-2 text-sm">Password Akses</label>
+                        <input type="password" id="admin-pwd" class="w-full bg-gray-900 border border-gray-600 rounded p-3 text-white focus:border-amber-500 outline-none" placeholder="Masukkan password...">
+                    </div>
+                    <p id="admin-error" class="text-red-400 text-sm font-bold hidden">Password salah! (Hint: admin123)</p>
+                    <button onclick="loginAdmin()" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 rounded flex justify-center items-center gap-2 transition-colors">
+                        <i class="fa-solid fa-right-to-bracket"></i> Masuk Dashboard
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div id="admin-dashboard" class="space-y-8 hidden">
+                <div class="flex justify-between items-end border-b border-gray-700 pb-4">
+                    <div>
+                        <h2 class="text-3xl font-black text-amber-500 flex items-center gap-3"><i class="fa-solid fa-gear"></i> Admin Dashboard</h2>
+                        <p class="text-gray-400 mt-1">Ubah data web secara langsung.</p>
+                    </div>
+                    <button onclick="logoutAdmin()" class="px-4 py-2 bg-gray-700 hover:bg-red-900 text-white rounded text-sm transition-colors">Logout</button>
+                </div>
+
+                <!-- 1. Meta Update -->
+                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+                    <h3 class="text-xl font-bold text-white mb-4">Pengontrol Pengumuman (Patch Notes Updater)</h3>
+                    <textarea id="edit-meta" class="w-full bg-gray-900 border border-gray-600 rounded p-3 text-white mb-3" rows="2"></textarea>
+                    <div class="flex justify-end items-center gap-4">
+                        <span id="save-meta-msg" class="text-green-400 text-sm font-bold opacity-0 transition-opacity"><i class="fa-solid fa-check"></i> Tersimpan!</span>
+                        <button onclick="saveMeta()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 rounded text-white font-bold">Simpan Meta</button>
+                    </div>
+                </div>
+
+                <!-- 2. Manajemen Build -->
+                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+                    <h3 class="text-xl font-bold text-white mb-4">Manajemen Build (Build Manager)</h3>
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div class="md:w-1/3 space-y-4">
+                            <div>
+                                <label class="block text-gray-400 text-sm mb-1">Pilih Kategori</label>
+                                <select id="edit-build-cat" onchange="loadBuildEditor()" class="w-full bg-gray-900 border border-gray-600 rounded p-2 text-white outline-none focus:border-amber-500"></select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-400 text-sm mb-1">Pilih Slot Perlengkapan</label>
+                                <select id="edit-build-slot" onchange="loadBuildEditor()" class="w-full bg-gray-900 border border-gray-600 rounded p-2 text-white outline-none focus:border-amber-500">
+                                    <option value="Kepala">Kepala</option>
+                                    <option value="Dada">Dada</option>
+                                    <option value="Kaki">Kaki</option>
+                                    <option value="Senjata Jarak Dekat">Senjata Jarak Dekat</option>
+                                    <option value="Senjata Jarak Jauh">Senjata Jarak Jauh</option>
+                                    <option value="Jubah">Jubah</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="md:w-2/3 bg-gray-900 p-4 rounded border border-gray-600 space-y-4">
+                            <h4 class="font-bold text-amber-500 border-b border-gray-700 pb-2"><i class="fa-solid fa-pen"></i> Form Edit Item</h4>
+                            <div>
+                                <label class="block text-gray-400 text-sm mb-1">Nama Item</label>
+                                <input type="text" id="edit-build-name" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white">
+                            </div>
+                            <div>
+                                <label class="block text-gray-400 text-sm mb-1">Saran Skill <span class="text-xs text-gray-500">(Q, W, E, Pasif)</span></label>
+                                <input type="text" id="edit-build-skill" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-amber-200 font-mono text-sm" placeholder="Contoh: Q: Cleave | W: Dash | Pasif: Deep Cuts">
+                            </div>
+                            <div>
+                                <label class="block text-gray-400 text-sm mb-1">Alasan Penggunaan</label>
+                                <textarea id="edit-build-reason" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" rows="3"></textarea>
+                            </div>
+                            <div class="flex justify-end items-center gap-4">
+                                <span id="save-build-msg" class="text-green-400 text-sm font-bold opacity-0 transition-opacity"><i class="fa-solid fa-check"></i> Tersimpan!</span>
+                                <button onclick="saveBuild()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 rounded text-white font-bold">Update Build</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Manajemen Guides -->
+                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+                    <h3 class="text-xl font-bold text-white mb-4">Manajemen Konten Strategi</h3>
+                    <div class="grid md:grid-cols-2 gap-4" id="admin-guides-container">
+                        <!-- Admin guides injected by JS -->
+                    </div>
+                    <div class="flex justify-end items-center gap-4 mt-4">
+                        <span id="save-guide-msg" class="text-green-400 text-sm font-bold opacity-0 transition-opacity"><i class="fa-solid fa-check"></i> Tersimpan!</span>
+                        <button onclick="saveGuides()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 rounded text-white font-bold">Simpan Panduan</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* =======================================
+           DATA STATE (Mocking Database)
+        ======================================= */
+        let dataStore = {
+            meta: "Patch 22.1: Bloodletter kena nerf pada cooldown, gunakan dengan lebih hati-hati!",
+            logs: [
+                // Contoh data log awal (opsional, dapat dihapus agar mulai dari kosong)
+                { date: "19-06-2026", activity: "Gathering", silver: 450000 },
+                { date: "20-06-2026", activity: "Dungeon", silver: 210000 }
+            ],
+            builds: {
+                PVP: {
+                    Kepala: { nama: "Mage Cowl", skill: "Skill 3: Poison | Pasif: Aggression", alasan: "Memberikan efek poison tambahan untuk burst damage saat ganking." },
+                    Dada: { nama: "Cleric Robe", skill: "Skill 3: Everlasting Spirit | Pasif: Aggression", alasan: "Skill invincibility (Everlasting Spirit) sangat krusial untuk bertahan hidup dari counter-attack." },
+                    Kaki: { nama: "Soldier Boots", skill: "Skill 3: Wanderlust | Pasif: Toughness", alasan: "Wanderlust memberikan durasi sprint yang panjang, sangat bagus untuk mengejar target yang lari jauh." },
+                    "Senjata Jarak Dekat": { nama: "Bloodletter", skill: "Q: Sunder Armor | W: Dash | E: Lunging Stabs | Pasif: Deep Cuts", alasan: "Mobilitas tinggi dan skill execute yang mematikan di bawah 40% HP." },
+                    "Senjata Jarak Jauh": { nama: "Bow of Badon", skill: "Q: Multishot | W: Frost Shot | E: Raging Storm | Pasif: Piercing Arrows", alasan: "AoE interrupt dan damage berkelanjutan dari jarak aman saat ZvZ atau ganking grup." },
+                    Jubah: { nama: "Thetford Cape", skill: "Pasif: Chain Lightning (Setiap 15 Detik)", alasan: "Tambahan chain lightning damage setiap auto-attack yang membantu menambah burst." }
+                },
+                PVE: {
+                    Kepala: { nama: "Scholar Cowl", skill: "Skill 3: Energy Shield | Pasif: Aggression", alasan: "Energy shield mengembalikan mana yang bocor saat clearing mob dan menahan sedikit damage." },
+                    Dada: { nama: "Mercenary Jacket", skill: "Skill 3: Bloodlust | Pasif: Balanced Mind", alasan: "Bloodlust memberikan sustain healing yang masif, membuatmu tidak perlu sering-sering istirahat." },
+                    Kaki: { nama: "Assassin Shoes", skill: "Skill 3: Dodge | Pasif: Balanced Mind", alasan: "Dodge memberikan invulnerability (kebal) sementara untuk menghindari serangan area (AoE) bos besar." },
+                    "Senjata Jarak Dekat": { nama: "Greataxe", skill: "Q: Rending Spin | W: Adrenaline Boost | E: Whirlwind", alasan: "Damage area (AoE) spin sangat cepat untuk membersihkan kerumunan mob sekaligus." },
+                    "Senjata Jarak Jauh": { nama: "Light Crossbow", skill: "Q: Explosive Bolt | W: Sunder Earth | E: Exploding Shot | Pasif: Well-Prepared", alasan: "DPS area yang konsisten, burst tinggi, dan skill bisa di-spam dengan cooldown singkat." },
+                    Jubah: { nama: "Demon Cape", skill: "Pasif: Opening to Hell", alasan: "Menciptakan kolam lava dari auto attack, sempurna untuk mob yang sedang di-root/diam." }
+                },
+                Gathering: {
+                    Kepala: { nama: "Gatherer Gear (Helm)", skill: "Skill 3: Sesuai Tipe (Cleanse/Push) | Pasif: Gathering Yield", alasan: "Memiliki skill escape natural untuk melarikan diri dari efek stun atau mendorong musuh menjauh." },
+                    Dada: { nama: "Gatherer Gear (Garb)", skill: "Skill 3: Sesuai Tipe (Windwall/Stealth) | Pasif: Gathering Yield", alasan: "Sangat krusial. Windwall bisa memblokir jalan ganker, sedangkan Ambush/Stealth untuk bersembunyi sesaat." },
+                    Kaki: { nama: "Gatherer Gear (Boots)", skill: "Skill 3: Flee/Wanderlust | Pasif: Carry Weight", alasan: "Menambah batas beban (carry weight) dan memiliki skill lari terbaik khusus gatherer." },
+                    "Senjata Jarak Dekat": { nama: "Bloodletter", skill: "Q: Sunder Armor | W: Dash | E: Lunging Stabs", alasan: "Gunakan HANYA untuk lari. Skill W dan E murni dipakai sebagai alat mobilitas ke depan, bukan memukul balik." },
+                    "Senjata Jarak Jauh": { nama: "Warbow", skill: "Q: Multishot | W: Ray of Light | E: Magic Arrow", alasan: "Ray of Light akan me-root ganker yang ada di belakangmu, menciptakan jarak aman untuk kabur." },
+                    Jubah: { nama: "Fort Sterling Cape", skill: "Pasif: Untouchable", alasan: "Otomatis membersihkan efek CC (Stun/Root/Silence) musuh pertama kali tanpa perlu kamu tekan apa pun." }
+                },
+                All_Aspect: {
+                    Kepala: { nama: "Hunter Hood", skill: "Skill 3: Retaliate | Pasif: Balanced Mind", alasan: "Retaliate mengembalikan 100% damage yang diterima. Efektif menahan burst PvP dan aman untuk PvE." },
+                    Dada: { nama: "Mercenary Jacket", skill: "Skill 3: Bloodlust | Pasif: Balanced Mind", alasan: "Sustain healing yang paling serbaguna, cocok dikombinasikan dengan serangan cepat." },
+                    Kaki: { nama: "Leather Shoes", skill: "Skill 3: Refreshing Sprint | Pasif: Balanced Mind", alasan: "Refreshing sprint tidak hanya menambah movement speed, tapi juga mengurangi semua cooldown skill lain." },
+                    "Senjata Jarak Dekat": { nama: "Battleaxe", skill: "Q: Rending Strike | W: Deadly Chop | E: Blood Bandit | Pasif: Deep Cuts", alasan: "Kapak dengan lifesteal alami (E). Sangat mandiri dan mematikan dalam pertarungan 1v1 atau open world PvE." },
+                    "Senjata Jarak Jauh": { nama: "Regular Bow", skill: "Q: Poison Arrow | W: Ray of Light | E: Enchanted Quiver", alasan: "Konsisten di segala situasi. Enchanted Quiver memberikan attack speed tinggi untuk menghancurkan musuh tunggal." },
+                    Jubah: { nama: "Thetford Cape", skill: "Pasif: Chain Lightning", alasan: "Peningkatan DPS murni secara keseluruhan tanpa pusing memikirkan mekanik rumit." }
+                }
+            },
+            guides: {
+                market: { title: "Perputaran Pasar", icon: "fa-map-location-dot", color: "border-green-500", text: "Perputaran pasar di Albion sangat bergantung pada zona waktu dan hari. Fokuskan menjual item di Royal City yang memiliki bonus crafting berbeda dengan tempat item tersebut dibuat." },
+                focus: { title: "Panduan Focus Point", icon: "fa-bullseye", color: "border-purple-500", text: "Gunakan Focus Point HANYA pada material Tier tinggi (T6.3, T7, T8) atau saat crafting item artefak mahal untuk efisiensi silver/focus tertinggi. Jangan buang untuk refine T4." },
+                zone: { title: "Deskripsi Setiap Zone", icon: "fa-map", color: "border-red-500", text: "Blue Zone: Aman, max T4.\nYellow Zone: PvP non-lethal, max T5.\nRed Zone: PvP lethal, awas ganker.\nBlack Zone: High risk high reward." },
+                tips: { title: "Tips & Trik Lengkap", icon: "fa-lightbulb", color: "border-blue-500", text: "1. Selalu cek harga di beberapa kota.\n2. Bawa makanan (Pork Pie) saat gathering.\n3. Jangan gunakan mount ox di Red/Black zone jika bermain solo." }
+            }
+        };
+
+        let currentActiveBuildCat = "PVP";
+        let currentActiveGearSlot = null;
+        let lastCalcResult = null; 
+
+        /* =======================================
+           INITIALIZATION & TABS
+        ======================================= */
+        window.onload = () => {
+            document.getElementById('meta-text-display').innerText = dataStore.meta;
+            document.getElementById('edit-meta').value = dataStore.meta;
+            
+            initBuildView();
+            initGuideView();
+            initAdminDropdowns();
+            loadAdminGuides();
+            renderLogs(); // Merender tabel Log saat halaman dimuat
+        };
+
+        function switchTab(tabName) {
+            // Memasukkan array id termasuk tab 'log'
+            ['kalkulator', 'build', 'panduan', 'log', 'admin'].forEach(id => {
+                document.getElementById('view-' + id).classList.add('hidden');
+                document.getElementById('view-' + id).classList.remove('block');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = "tab-btn px-4 py-2 text-sm font-medium rounded-md transition-colors text-gray-300 hover:bg-gray-700";
+            });
+
+            document.getElementById('view-' + tabName).classList.remove('hidden');
+            document.getElementById('view-' + tabName).classList.add('block');
+
+            if(tabName !== 'admin') {
+                document.getElementById('tab-' + tabName).className = "tab-btn px-4 py-2 text-sm font-medium rounded-md transition-colors bg-amber-600 text-white";
+                document.getElementById('meta-banner').style.display = 'block';
+            } else {
+                document.getElementById('meta-banner').style.display = 'none';
+            }
+        }
+
+        /* =======================================
+           LOGIC: LOG HARIAN PENDAPATAN
+        ======================================= */
+        function addLog() {
+            let activity = document.getElementById('log-activity').value;
+            let silverInput = document.getElementById('log-silver').value;
+            let silverAmount = parseInt(silverInput);
+            let errorMsg = document.getElementById('log-error-msg');
+
+            // Validasi Input
+            if (isNaN(silverAmount) || silverAmount <= 0) {
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+            errorMsg.classList.add('hidden');
+
+            // Pembuatan Tanggal Otomatis (Format: DD-MM-YYYY)
+            let today = new Date();
+            let dd = String(today.getDate()).padStart(2, '0');
+            let mm = String(today.getMonth() + 1).padStart(2, '0'); // Januari adalah 0
+            let yyyy = today.getFullYear();
+            let dateStr = dd + '-' + mm + '-' + yyyy;
+
+            // Memasukkan ke dalam array dataStore
+            dataStore.logs.push({
+                date: dateStr,
+                activity: activity,
+                silver: silverAmount
+            });
+
+            // Kosongkan form input
+            document.getElementById('log-silver').value = '';
+
+            // Update Tabel
+            renderLogs();
+        }
+
+        function renderLogs() {
+            let tbody = document.getElementById('log-table-body');
+            let totalEl = document.getElementById('log-total-silver');
+            
+            tbody.innerHTML = '';
+            
+            // Jika data kosong
+            if (dataStore.logs.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="3" class="p-8 text-center text-gray-500">
+                            <i class="fa-solid fa-box-open text-3xl mb-2"></i><br>
+                            Belum ada data pendapatan yang dicatat.
+                        </td>
+                    </tr>
+                `;
+                totalEl.innerText = "0 🪙";
+                return;
+            }
+
+            // Loop dan Render Data secara terbalik (Terbaru di atas)
+            for (let i = dataStore.logs.length - 1; i >= 0; i--) {
+                let log = dataStore.logs[i];
+                let tr = document.createElement('tr');
+                tr.className = "border-b border-gray-700/50 hover:bg-gray-700/50 transition-colors";
+                
+                // Menentukan warna icon berdasarkan tipe
+                let iconStr = '<i class="fa-solid fa-coins text-gray-400 mr-2"></i>';
+                if(log.activity.includes('Gathering')) iconStr = '<i class="fa-solid fa-pickaxe text-amber-500 mr-2"></i>';
+                if(log.activity.includes('Faction')) iconStr = '<i class="fa-solid fa-flag text-red-500 mr-2"></i>';
+                if(log.activity.includes('Market')) iconStr = '<i class="fa-solid fa-shop text-blue-400 mr-2"></i>';
+                if(log.activity.includes('Dungeon')) iconStr = '<i class="fa-solid fa-dungeon text-purple-400 mr-2"></i>';
+
+                tr.innerHTML = `
+                    <td class="p-4 text-sm text-gray-300 whitespace-nowrap">${log.date}</td>
+                    <td class="p-4 text-sm text-gray-200 font-medium">${iconStr} ${log.activity}</td>
+                    <td class="p-4 text-right text-sm font-bold text-green-400">+${log.silver.toLocaleString('id-ID')}</td>
+                `;
+                tbody.appendChild(tr);
+            }
+
+            // Hitung Total Akumulasi Silver
+            let total = dataStore.logs.reduce((sum, item) => sum + item.silver, 0);
+            totalEl.innerText = total.toLocaleString('id-ID') + " 🪙";
+        }
+
+        /* =======================================
+           KALKULATOR LOGIC
+        ======================================= */
+        function switchCalcType(type) {
+            if(type === 'refining') {
+                document.getElementById('calc-refining-box').classList.remove('hidden');
+                document.getElementById('calc-gathering-box').classList.add('hidden');
+                document.getElementById('btn-calc-refining').className = "flex items-center gap-2 px-4 py-2 rounded-t-lg transition-colors bg-gray-800 text-amber-500 border-b-2 border-amber-500";
+                document.getElementById('btn-calc-gathering').className = "flex items-center gap-2 px-4 py-2 rounded-t-lg transition-colors text-gray-400 hover:text-gray-200";
+            } else {
+                document.getElementById('calc-refining-box').classList.add('hidden');
+                document.getElementById('calc-gathering-box').classList.remove('hidden');
+                document.getElementById('btn-calc-gathering').className = "flex items-center gap-2 px-4 py-2 rounded-t-lg transition-colors bg-gray-800 text-amber-500 border-b-2 border-amber-500";
+                document.getElementById('btn-calc-refining').className = "flex items-center gap-2 px-4 py-2 rounded-t-lg transition-colors text-gray-400 hover:text-gray-200";
+            }
+        }
+
+        function calculateRefining() {
+            let item = document.getElementById('calc-item').value || 'Item';
+            let bahan = parseFloat(document.getElementById('calc-bahan').value) || 0;
+            let qty = parseFloat(document.getElementById('calc-qty').value) || 1;
+            let ucv = parseFloat(document.getElementById('calc-ucv').value) || 0;
+            let jual = parseFloat(document.getElementById('calc-jual').value) || 0;
+            let pajak = parseFloat(document.getElementById('calc-pajak').value) || 0;
+            let returnRate = parseFloat(document.getElementById('calc-return').value) || 0;
+
+            let biayaProses = ucv * qty;
+            let totalHPP = bahan + biayaProses;
+            let extraQty = (returnRate / 100) * qty;
+            let totalOutput = qty + extraQty;
+
+            let totalKotor = jual * totalOutput;
+            let pajakNominal = totalKotor * (pajak / 100);
+            let untungBersih = totalKotor - totalHPP - pajakNominal;
+            let roi = totalHPP > 0 ? (untungBersih / totalHPP) * 100 : 0;
+
+            lastCalcResult = { item, totalHPP, totalKotor, pajakNominal, untungBersih, roi };
+
+            document.getElementById('calc-result-empty').classList.add('hidden');
+            document.getElementById('calc-result-data').classList.remove('hidden');
+
+            document.getElementById('res-hpp').innerText = formatNum(totalHPP) + " 🪙";
+            document.getElementById('res-kotor').innerText = formatNum(totalKotor) + " 🪙";
+            document.getElementById('res-pajak').innerText = "-" + formatNum(pajakNominal) + " 🪙";
+            
+            let resBersihEl = document.getElementById('res-bersih');
+            let resBoxUntung = document.getElementById('res-box-untung');
+            resBersihEl.innerText = (untungBersih > 0 ? '+' : '') + formatNum(untungBersih) + " 🪙";
+            
+            if(untungBersih >= 0) {
+                resBersihEl.className = "font-bold text-xl text-green-400";
+                resBoxUntung.className = "flex justify-between p-4 rounded-lg border bg-green-900/30 border-green-700";
+            } else {
+                resBersihEl.className = "font-bold text-xl text-red-400";
+                resBoxUntung.className = "flex justify-between p-4 rounded-lg border bg-red-900/30 border-red-700";
+            }
+
+            document.getElementById('res-roi').innerText = roi.toFixed(2) + "%";
+        }
+
+        function formatNum(num) { return num.toLocaleString('id-ID', { maximumFractionDigits: 0 }); }
+
+        function shareWA() {
+            if(!lastCalcResult) return;
+            let r = lastCalcResult;
+            let text = `📊 Hasil Analisa ${r.item}\nHPP: ${formatNum(r.totalHPP)}\nJual Kotor: ${formatNum(r.totalKotor)}\nUntung Bersih: ${formatNum(r.untungBersih)}\nEfisiensi (ROI): ${r.roi.toFixed(2)}%`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
+        }
+
+        function downloadCSV() {
+            if(!lastCalcResult) return;
+            let r = lastCalcResult;
+            let csvContent = `Item,Total HPP,Total Jual Kotor,Pajak,Keuntungan Bersih,ROI(%)\n"${r.item}",${r.totalHPP},${r.totalKotor},${r.pajakNominal},${r.untungBersih},${r.roi.toFixed(2)}`;
+            let blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            let link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `AlbionCalc_${r.item}.csv`;
+            link.click();
+        }
+
+        /* =======================================
+           BUILD LOGIC 
+        ======================================= */
+        function initBuildView() {
+            let catContainer = document.getElementById('build-categories');
+            catContainer.innerHTML = '';
+            Object.keys(dataStore.builds).forEach(cat => {
+                let btn = document.createElement('button');
+                let displayCat = cat.replace('_', ' ');
+                btn.innerText = displayCat;
+                btn.onclick = () => selectBuildCat(cat);
+                if(cat === currentActiveBuildCat) {
+                    btn.className = "px-5 py-3 rounded-lg font-bold transition-all bg-amber-600 text-white shadow-lg scale-105";
+                } else {
+                    btn.className = "px-5 py-3 rounded-lg font-bold transition-all bg-gray-800 text-gray-400 hover:bg-gray-700";
+                }
+                btn.id = "btn-cat-" + cat;
+                catContainer.appendChild(btn);
+            });
+            renderGearSlots();
+        }
+
+        function selectBuildCat(cat) {
+            currentActiveBuildCat = cat;
+            currentActiveGearSlot = null;
+            initBuildView();
+            document.getElementById('active-cat-name').innerText = cat.replace('_', ' ');
+            document.getElementById('reason-empty').classList.remove('hidden');
+            document.getElementById('reason-content').classList.add('hidden');
+        }
+
+        function renderGearSlots() {
+            let container = document.getElementById('gear-slots-container');
+            container.innerHTML = '';
+            let slots = ['Kepala', 'Dada', 'Kaki', 'Senjata Jarak Dekat', 'Senjata Jarak Jauh', 'Jubah'];
+            let currentBuild = dataStore.builds[currentActiveBuildCat];
+
+            slots.forEach(slot => {
+                let div = document.createElement('div');
+                let isSelected = slot === currentActiveGearSlot;
+                
+                div.className = `p-4 border rounded-lg cursor-pointer transition-all flex justify-between items-center group ${isSelected ? 'bg-amber-900/30 border-amber-500' : 'bg-gray-900 border-gray-700 hover:border-gray-500'}`;
+                div.onclick = () => selectGearSlot(slot);
+
+                let iconStr = "";
+                if(slot === 'Senjata Jarak Dekat') iconStr = '<i class="fa-solid fa-sword mr-1"></i>';
+                if(slot === 'Senjata Jarak Jauh') iconStr = '<i class="fa-solid fa-bow-arrow mr-1"></i>';
+
+                div.innerHTML = `
+                    <div class="flex flex-col">
+                        <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">${iconStr}${slot}</span>
+                        <span class="font-bold text-lg ${isSelected ? 'text-amber-400' : 'text-gray-200 group-hover:text-amber-400'} transition-colors">
+                            ${currentBuild[slot].nama}
+                        </span>
+                    </div>
+                    <div class="w-3 h-3 rounded-full ${isSelected ? 'bg-amber-500' : 'bg-gray-700'}"></div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function selectGearSlot(slot) {
+            currentActiveGearSlot = slot;
+            renderGearSlots();
+
+            let gearData = dataStore.builds[currentActiveBuildCat][slot];
+            
+            document.getElementById('reason-empty').classList.add('hidden');
+            document.getElementById('reason-content').classList.remove('hidden');
+            
+            document.getElementById('reason-item-name').innerText = gearData.nama;
+            document.getElementById('reason-item-slot').innerText = `${slot} - ${currentActiveBuildCat.replace('_', ' ')}`;
+            
+            document.getElementById('reason-item-skill').innerText = gearData.skill || 'Tidak ada rekomendasi skill khusus.';
+            document.getElementById('reason-item-desc').innerText = gearData.alasan;
+        }
+
+        /* =======================================
+           GUIDES LOGIC
+        ======================================= */
+        function initGuideView() {
+            let container = document.getElementById('guides-container');
+            container.innerHTML = '';
+            
+            Object.values(dataStore.guides).forEach(guide => {
+                let card = document.createElement('div');
+                card.className = `bg-gray-800 p-6 rounded-xl border-t-4 ${guide.color} shadow-lg`;
+                card.innerHTML = `
+                    <h3 class="text-xl font-bold text-gray-100 mb-4 flex items-center gap-2">
+                        <i class="fa-solid ${guide.icon} text-gray-400"></i> ${guide.title}
+                    </h3>
+                    <div class="text-gray-300 whitespace-pre-line leading-relaxed">
+                        ${guide.text}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        /* =======================================
+           ADMIN LOGIC
+        ======================================= */
+        function loginAdmin() {
+            let pwd = document.getElementById('admin-pwd').value;
+            if(pwd === 'admin123') {
+                document.getElementById('admin-login').classList.add('hidden');
+                document.getElementById('admin-dashboard').classList.remove('hidden');
+                document.getElementById('admin-error').classList.add('hidden');
+            } else {
+                document.getElementById('admin-error').classList.remove('hidden');
+            }
+        }
+
+        function logoutAdmin() {
+            document.getElementById('admin-login').classList.remove('hidden');
+            document.getElementById('admin-dashboard').classList.add('hidden');
+            document.getElementById('admin-pwd').value = '';
+        }
+
+        function saveMeta() {
+            let newVal = document.getElementById('edit-meta').value;
+            dataStore.meta = newVal;
+            document.getElementById('meta-text-display').innerText = newVal;
+            showSuccessMsg('save-meta-msg');
+        }
+
+        function initAdminDropdowns() {
+            let catSel = document.getElementById('edit-build-cat');
+            catSel.innerHTML = '';
+            Object.keys(dataStore.builds).forEach(cat => {
+                let opt = document.createElement('option');
+                opt.value = cat;
+                opt.innerText = cat.replace('_', ' ');
+                catSel.appendChild(opt);
+            });
+            loadBuildEditor();
+        }
+
+        function loadBuildEditor() {
+            let cat = document.getElementById('edit-build-cat').value;
+            let slot = document.getElementById('edit-build-slot').value;
+            let data = dataStore.builds[cat][slot];
+            
+            document.getElementById('edit-build-name').value = data.nama;
+            document.getElementById('edit-build-skill').value = data.skill || ''; 
+            document.getElementById('edit-build-reason').value = data.alasan;
+        }
+
+        function saveBuild() {
+            let cat = document.getElementById('edit-build-cat').value;
+            let slot = document.getElementById('edit-build-slot').value;
+            let name = document.getElementById('edit-build-name').value;
+            let skill = document.getElementById('edit-build-skill').value;
+            let reason = document.getElementById('edit-build-reason').value;
+
+            dataStore.builds[cat][slot] = { nama: name, skill: skill, alasan: reason };
+            
+            initBuildView();
+            if(currentActiveGearSlot) selectGearSlot(currentActiveGearSlot);
+            
+            showSuccessMsg('save-build-msg');
+        }
+
+        function loadAdminGuides() {
+            let container = document.getElementById('admin-guides-container');
+            container.innerHTML = '';
+            Object.keys(dataStore.guides).forEach(key => {
+                let val = dataStore.guides[key];
+                let div = document.createElement('div');
+                div.innerHTML = `
+                    <label class="block text-amber-500 font-bold mb-1 uppercase text-sm">${key} Guide</label>
+                    <textarea id="edit-guide-${key}" class="w-full bg-gray-900 border border-gray-600 rounded p-3 text-white text-sm" rows="4">${val.text}</textarea>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function saveGuides() {
+            Object.keys(dataStore.guides).forEach(key => {
+                dataStore.guides[key].text = document.getElementById(`edit-guide-${key}`).value;
+            });
+            initGuideView();
+            showSuccessMsg('save-guide-msg');
+        }
+
+        function showSuccessMsg(id) {
+            let el = document.getElementById(id);
+            el.style.opacity = '1';
+            setTimeout(() => { el.style.opacity = '0'; }, 2000);
+        }
+
+    </script>
+</body>
+</html>
